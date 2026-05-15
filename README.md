@@ -1,147 +1,234 @@
-# QuantWeather-BD
+# QuantWeather-BD 🌦️⚛️
+### Quantum Machine Learning-Based Weather Forecasting for Bangladesh
 
-**QuantWeather-BD** is a hybrid Quantum Machine Learning (QML) project for **next-day temperature prediction in Bangladesh** using the NASA POWER daily weather dataset.
+[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://python.org)
+[![PennyLane](https://img.shields.io/badge/PennyLane-0.29.1-green.svg)](https://pennylane.ai)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.x-orange.svg)](https://pytorch.org)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-The project combines:
-- Classical preprocessing and feature engineering
-- A Variational Quantum Circuit (VQC) built with PennyLane
-- A PyTorch hybrid model (quantum layer + classical output layer)
+---
 
-## Project Objective
+## 📌 Overview
 
-Build and evaluate a reproducible end-to-end pipeline to predict **next day `T2M` (2-meter air temperature)** from historical weather variables.
+**QuantWeather-BD** is a hybrid Quantum Machine Learning (QML) system for next-day multi-variable weather forecasting in Bangladesh. It combines a **Variational Quantum Circuit (VQC)** with a classical neural network, trained on 45 years of NASA POWER data, and evaluated against four classical baseline models.
 
-## Dataset
+---
 
-- **Source:** NASA POWER Daily Weather Data
-- **Coverage:** January 1, 1981 to May 14, 2026
-- **Location:** Bangladesh region (lat 23.8103, lon 90.4125)
-- **Primary file used in notebook:**
-  - `Dataset/bangladesh_weather_1981_2026.csv`
+## 🎯 Objectives
 
-### Input Variables
+- Predict next-day weather variables using a hybrid QML model
+- Compare QML performance against classical ML baselines
+- Demonstrate real-world applicability via Telegram Bot integration
 
-- `T2M` - Temperature at 2 meters (C)
-- `T2M_MAX` - Maximum temperature at 2 meters (C)
-- `T2M_MIN` - Minimum temperature at 2 meters (C)
-- `RH2M` - Relative humidity at 2 meters (%)
-- `PRECTOTCORR` - Corrected precipitation (mm/day)
-- `WS2M` - Wind speed at 2 meters (m/s)
+---
 
-### Data Notes
+## 📂 Project Structure
 
-- NASA POWER missing value code `-999` is replaced with `NaN`
-- Header metadata rows are skipped (`skiprows=16`)
-- `DATE` is constructed from `YEAR`, `MO`, and `DY`
-
-## Methodology
-
-The notebook implements the following pipeline:
-
-1. **Data Loading and Cleaning**
-2. **Exploratory Data Analysis (EDA)**
-3. **Feature Engineering**
-4. **QML Model Construction**
-5. **Training**
-6. **Evaluation**
-7. **Model and Scaler Saving**
-
-### Target Definition
-
-- Target variable: **next day temperature**
-- `TARGET_T2M_NEXT_DAY = T2M.shift(-1)`
-
-### Train/Test Strategy
-
-- Chronological split (no shuffling)
-- 80% training, 20% testing
-- Feature scaling with `MinMaxScaler` to `[0, 1]`
-
-## Quantum Model Design
-
-- **Framework:** PennyLane + PyTorch
-- **Device:** `default.qubit`
-- **Qubits:** `6`
-- **Embedding:** `AngleEmbedding`
-- **Variational block:** `StronglyEntanglingLayers`
-- **Hybrid head:** Classical `nn.Linear` output layer
-
-## Training Configuration
-
-- Loss: `MSELoss`
-- Optimizer: `Adam`
-- Learning rate: `0.01`
-- Epochs: `100`
-- Progress logging every `10` epochs
-
-## Evaluation Metrics
-
-- MAE
-- RMSE
-- R^2 score
-- Actual vs Predicted temperature plot
-
-## Project Outputs
-
-After running the notebook, the following artifacts are generated:
-
-- `quantweather_bd_model.pth` - Trained PyTorch hybrid QML model weights
-- `scaler.pkl` - Fitted `MinMaxScaler`
-
-## Repository Structure
-
-```text
-Quantum-Enhanced Weather Forecasting for Bangladesh/
-|-- Dataset/
-|   |-- bangladesh_weather_1981_2026.csv
-|-- QuantWeather-BD.ipynb
-|-- quantweather_bd_model.pth
-|-- scaler.pkl
-|-- README.md
+```
+QuantWeather-BD/
+├── Dataset/
+│   └── bangladesh_weather_1981_2026.csv
+├── QuantWeather.ipynb               # Main notebook (Colab)
+├── qml_model_final.pth              # Trained QML model
+├── mlp_model_final.pth              # Trained MLP model
+├── lstm_model_final.pth             # Trained LSTM model
+├── lr_model.pkl                     # Trained Linear Regression
+├── rf_model.pkl                     # Trained Random Forest
+├── scaler_X.pkl                     # Feature scaler
+├── scaler_y.pkl                     # Target scaler
+├── full_evaluation_results.csv      # Per-variable results
+├── model_comparison_summary.csv     # Summary comparison
+├── statistical_tests.csv            # Wilcoxon test results
+├── eda_timeseries.png
+├── eda_correlation.png
+├── convergence_plot.png
+├── actual_vs_predicted.png
+├── confusion_matrix.png
+├── roc_curves.png
+├── model_comparison_chart.png
+└── training_time.png
 ```
 
-## Setup Instructions
+---
 
-### 1. Create and activate environment (recommended)
+## 📊 Dataset
+
+| Property | Details |
+|---|---|
+| **Source** | NASA POWER (MERRA-2) |
+| **Location** | Dhaka, Bangladesh (23.8103°N, 90.4125°E) |
+| **Date Range** | January 1, 1981 → May 14, 2026 |
+| **Total Records** | 16,570 daily observations |
+| **Features** | T2M, T2M_MAX, T2M_MIN, RH2M, PRECTOTCORR, WS2M |
+
+### Feature Description
+
+| Feature | Description | Unit |
+|---|---|---|
+| T2M | Average temperature at 2m | °C |
+| T2M_MAX | Maximum temperature at 2m | °C |
+| T2M_MIN | Minimum temperature at 2m | °C |
+| RH2M | Relative humidity at 2m | % |
+| PRECTOTCORR | Corrected precipitation | mm/day |
+| WS2M | Wind speed at 2m | m/s |
+
+---
+
+## ⚛️ Model Architecture
+
+### Hybrid QML Model
+
+```
+Input (6 features)
+       ↓
+Quantum Circuit (6 qubits, 3 StronglyEntanglingLayers)
+  - AngleEmbedding
+  - StronglyEntanglingLayers
+  - PauliZ measurements
+       ↓
+Classical Layers
+  - Linear(6 → 16) + ReLU
+  - Linear(16 → 6)
+       ↓
+Output (6 weather variables)
+```
+
+| Config | Value |
+|---|---|
+| Qubits | 6 |
+| VQC Layers | 3 |
+| Total Parameters | 268 |
+| Framework | PennyLane + PyTorch |
+
+---
+
+## 🏋️ Training Configuration
+
+| Parameter | Value |
+|---|---|
+| Optimizer | Adam (lr=0.005) |
+| Loss Function | MSELoss |
+| Epochs | 100 |
+| Batch Size | 64 |
+| LR Scheduler | StepLR (step=30, γ=0.5) |
+| Train/Test Split | 80% / 20% |
+
+---
+
+## 📈 Results
+
+### Model Comparison (Average across 6 variables)
+
+| Model | MAE | RMSE | R² | MAPE (%) |
+|---|---|---|---|---|
+| Linear Regression | 1.7904 | 3.1333 | 0.7878 | 110.78 |
+| Random Forest | 1.8317 | 3.1599 | 0.7839 | 105.19 |
+| MLP | 1.8191 | 3.0333 | 0.8001 | 156.22 |
+| LSTM | 1.7915 | 3.0196 | 0.8016 | 157.66 |
+| **QML (Ours)** | **1.8589** | **3.0628** | **0.7970** | **190.90** |
+
+### Temperature Classification Results (QML)
+
+| Category | Precision | Recall | F1-Score |
+|---|---|---|---|
+| Cold (<20°C) | 0.90 | 0.94 | 0.92 |
+| Mild (20-27°C) | 0.89 | 0.85 | 0.87 |
+| Hot (27-32°C) | 0.95 | 0.96 | 0.96 |
+| Extreme (>32°C) | 0.76 | 0.37 | 0.50 |
+| **Overall Accuracy** | | | **92%** |
+
+### Statistical Significance (Wilcoxon Signed-Rank Test)
+
+| Comparison | p-value | Result |
+|---|---|---|
+| QML vs Linear Regression | 0.004393 | ✅ Significant |
+| QML vs Random Forest | 0.029319 | ✅ Significant |
+| QML vs MLP | 0.696380 | ➖ Comparable |
+| QML vs LSTM | 0.000000 | ✅ Significant |
+
+### Training Time Comparison
+
+| Model | Training Time |
+|---|---|
+| Linear Regression | 0.1s |
+| Random Forest | 10.8s |
+| MLP | 41.5s |
+| LSTM | 116.3s |
+| QML (Ours) | 18,030.7s (~5 hrs) |
+
+---
+
+## ⚙️ Installation
 
 ```bash
-python -m venv .venv
-# Windows
-.venv\Scripts\activate
+# Create conda environment
+conda create -n quantum python=3.10
+conda activate quantum
+
+# Install dependencies
+pip install pennylane pennylane-lightning
+pip install torch scikit-learn pandas numpy
+pip install matplotlib seaborn joblib tqdm scipy
 ```
 
-### 2. Install dependencies
+---
 
-```bash
-pip install pennylane torch pandas numpy matplotlib seaborn scikit-learn joblib jupyter
+## 🚀 Usage
+
+### Google Colab (Recommended)
+1. Upload `QuantWeather.ipynb` to Google Colab
+2. Set Runtime → T4 GPU
+3. Upload dataset to Google Drive at:
+   `My Drive/QuantWeather-BD/Dataset/bangladesh_weather_1981_2026.csv`
+4. Run all cells
+
+---
+
+## 📦 Dependencies
+
+| Package | Version |
+|---|---|
+| Python | 3.10+ |
+| PennyLane | 0.29.1 |
+| PyTorch | 2.x |
+| scikit-learn | latest |
+| pandas | latest |
+| numpy | latest |
+| matplotlib | latest |
+| seaborn | latest |
+| scipy | latest |
+
+---
+
+## 🔮 Future Work
+
+- Telegram Bot integration for real-time forecasting
+- Precipitation classification (No Rain / Light / Moderate / Heavy)
+- Multi-city expansion (Chittagong, Sylhet, Rajshahi)
+- Pressure (PS) feature integration
+- Ablation study (4 vs 6 qubits)
+- Real quantum hardware deployment (IBM Quantum)
+
+---
+
+## 📄 Citation
+
+```bibtex
+@article{quantweather_bd_2026,
+  title   = {QuantWeather-BD: Quantum Machine Learning-Based 
+             Weather Forecasting for Bangladesh},
+  author  = {},
+  journal = {},
+  year    = {2026}
+}
 ```
 
-### 3. Launch Jupyter Notebook
+---
 
-```bash
-jupyter notebook
-```
+## 📜 License
 
-Open `QuantWeather-BD.ipynb` and run cells sequentially.
+This project is licensed under the MIT License.
 
-## Reproducibility
+---
 
-The notebook sets random seeds for NumPy and PyTorch to improve run-to-run consistency.
-
-## Future Improvements
-
-- Multi-step forecasting (2 to 7 day horizon)
-- Additional weather and seasonal lag features
-- Hyperparameter tuning for circuit depth and optimizer
-- Comparison against classical baselines (LSTM, XGBoost, Random Forest)
-- Station-wise or region-wise modeling across Bangladesh
-
-## License
-
-This project is open for academic and research use. Add a formal license file (`LICENSE`) if you plan to publish or distribute.
-
-## Author
-
-**QuantWeather-BD Project**
-
-If you want, this README can be upgraded next with badges, benchmark tables, and publication-style result reporting.
+*Dataset source: NASA Prediction Of Worldwide Energy Resources (POWER) — https://power.larc.nasa.gov*
