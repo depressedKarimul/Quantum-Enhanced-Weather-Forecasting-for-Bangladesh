@@ -211,32 +211,32 @@ QuantWeather-BD/
 
 ### Graphs
 
-| File | Description |
-|---|---|
-| `eda_timeseries.png` | Weather variables over 45 years |
-| `eda_correlation.png` | Feature correlation heatmap + monthly temperature |
-| `convergence_plot.png` | Training loss for MLP, LSTM, QML |
-| `actual_vs_predicted.png` | Predicted vs actual values |
-| `confusion_matrix.png` | Rain classifier confusion matrix |
-| `roc_curves.png` | ROC curves for rain classifier |
-| `model_comparison_chart.png` | Visual comparison of all models |
-| `training_time.png` | Training time comparison |
-| `hybrid_model_diagram.png` | Full hybrid QML architecture diagram |
-| `circuit_clean.png` | Variational quantum circuit diagram |
-| `circuit_decomposed.png` | Decomposed quantum circuit using RZ, RY, and CNOT gates |
-| `shap_rf_summary.png` | SHAP summary plot for Random Forest |
-| `shap_rf_bar.png` | SHAP feature importance bar plot for Random Forest |
-| `shap_qml_summary.png` | SHAP summary plot for QML |
-| `shap_comparison.png` | SHAP comparison between RF and QML |
-| `shap_rain_importance.png` | SHAP importance for Rain Classifier |
-| `seasonal_analysis.png` | Seasonal weather patterns |
-| `residual_analysis.png` | Residual analysis plot |
-| `boxplot.png` | Feature distribution boxplots |
-| `learning_curves_classical.png` | Learning curves |
-| `rain_confusion_matrix.png` | Rain confusion matrix |
-| `rain_smote_confusion.png` | SMOTE rain confusion matrix |
-| `data_distribution.png` | Data distribution |
-| `quantum_circuit_diagram.png` | Quantum circuit visualization |
+| Preview | File | Description |
+|---|---|---|
+| <img src="eda_timeseries.png" width="220" alt="Weather variables over 45 years"> | `eda_timeseries.png` | Weather variables over 45 years |
+| <img src="eda_correlation.png" width="220" alt="Feature correlation heatmap and monthly temperature"> | `eda_correlation.png` | Feature correlation heatmap + monthly temperature |
+| <img src="convergence_plot.png" width="220" alt="Training loss for MLP, LSTM, and QML"> | `convergence_plot.png` | Training loss for MLP, LSTM, QML |
+| <img src="actual_vs_predicted.png" width="220" alt="Predicted vs actual values"> | `actual_vs_predicted.png` | Predicted vs actual values |
+| <img src="confusion_matrix.png" width="220" alt="Rain classifier confusion matrix"> | `confusion_matrix.png` | Rain classifier confusion matrix |
+| <img src="roc_curves.png" width="220" alt="ROC curves for rain classifier"> | `roc_curves.png` | ROC curves for rain classifier |
+| <img src="model_comparison_chart.png" width="220" alt="Visual comparison of all models"> | `model_comparison_chart.png` | Visual comparison of all models |
+| <img src="training_time.png" width="220" alt="Training time comparison"> | `training_time.png` | Training time comparison |
+| <img src="hybrid_model_diagram.png" width="220" alt="Full hybrid QML architecture diagram"> | `hybrid_model_diagram.png` | Full hybrid QML architecture diagram |
+| <img src="circuit_clean.png" width="220" alt="Variational quantum circuit diagram"> | `circuit_clean.png` | Variational quantum circuit diagram |
+| <img src="circuit_decomposed.png" width="220" alt="Decomposed quantum circuit using RZ, RY, and CNOT gates"> | `circuit_decomposed.png` | Decomposed quantum circuit using RZ, RY, and CNOT gates |
+| <img src="shap_rf_summary.png" width="220" alt="SHAP summary plot for Random Forest"> | `shap_rf_summary.png` | SHAP summary plot for Random Forest |
+| <img src="shap_rf_bar.png" width="220" alt="SHAP feature importance bar plot for Random Forest"> | `shap_rf_bar.png` | SHAP feature importance bar plot for Random Forest |
+| <img src="shap_qml_summary.png" width="220" alt="SHAP summary plot for QML"> | `shap_qml_summary.png` | SHAP summary plot for QML |
+| <img src="shap_comparison.png" width="220" alt="SHAP comparison between Random Forest and QML"> | `shap_comparison.png` | SHAP comparison between RF and QML |
+| <img src="shap_rain_importance.png" width="220" alt="SHAP importance for Rain Classifier"> | `shap_rain_importance.png` | SHAP importance for Rain Classifier |
+| <img src="seasonal_analysis.png" width="220" alt="Seasonal weather patterns"> | `seasonal_analysis.png` | Seasonal weather patterns |
+| <img src="residual_analysis.png" width="220" alt="Residual analysis plot"> | `residual_analysis.png` | Residual analysis plot |
+| <img src="boxplot.png" width="220" alt="Feature distribution boxplots"> | `boxplot.png` | Feature distribution boxplots |
+| <img src="learning_curves_classical.png" width="220" alt="Learning curves"> | `learning_curves_classical.png` | Learning curves |
+| <img src="rain_confusion_matrix.png" width="220" alt="Rain confusion matrix"> | `rain_confusion_matrix.png` | Rain confusion matrix |
+| <img src="rain_smote_confusion.png" width="220" alt="SMOTE rain confusion matrix"> | `rain_smote_confusion.png` | SMOTE rain confusion matrix |
+| <img src="data_distribution.png" width="220" alt="Data distribution"> | `data_distribution.png` | Data distribution |
+| <img src="quantum_circuit_diagram.png" width="220" alt="Quantum circuit visualization"> | `quantum_circuit_diagram.png` | Quantum circuit visualization |
 
 ### CSV Files
 
