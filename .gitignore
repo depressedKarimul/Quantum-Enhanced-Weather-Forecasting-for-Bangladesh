@@ -1,0 +1,20 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Trained model artifacts
+*.pth
+*.pkl
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Notebook checkpoints
+.ipynb_checkpoints/
+
+# Local tooling and temporary files
+.DS_Store
+Thumbs.db
+*.log

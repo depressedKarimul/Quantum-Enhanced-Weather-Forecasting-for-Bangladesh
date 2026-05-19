@@ -1,44 +1,179 @@
 # QuantWeather-BD 🌦️⚛️
+
 ### Quantum Machine Learning-Based Weather Forecasting for Bangladesh
 
-[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://python.org)
-[![PennyLane](https://img.shields.io/badge/PennyLane-0.29.1-green.svg)](https://pennylane.ai)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.x-orange.svg)](https://pytorch.org)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.x-ee4c2c.svg)](https://pytorch.org/)
+[![PennyLane](https://img.shields.io/badge/PennyLane-QML-674ea7.svg)](https://pennylane.ai/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-Webhook-009688.svg)](https://fastapi.tiangolo.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+QuantWeather-BD is a research-grade hybrid Quantum-Classical Machine Learning system for next-day weather forecasting in Dhaka, Bangladesh. It combines a Variational Quantum Circuit (VQC) implemented with PennyLane and PyTorch with classical neural layers, evaluates performance against conventional machine learning baselines, and deploys the resulting forecasts through a bilingual Facebook Messenger chatbot powered by Groq LLM.
 
 ---
 
 ## 📌 Overview
 
-**QuantWeather-BD** is a hybrid Quantum Machine Learning (QML) system for next-day multi-variable weather forecasting in Bangladesh. It combines a **Variational Quantum Circuit (VQC)** with a classical neural network, trained on 45 years of NASA POWER data, and evaluated against four classical baseline models.
+The project forecasts six next-day weather variables for Dhaka using 45 years of NASA POWER daily weather data. The core model is a hybrid QML architecture that encodes scaled weather features into a quantum circuit, learns entangled quantum representations, and maps quantum measurements back to weather variables through a classical neural network.
+
+Alongside regression forecasting, QuantWeather-BD includes a Random Forest rain classifier with SMOTE oversampling, SHAP-based explainability for model transparency, and a FastAPI webhook for Facebook Messenger integration.
 
 ---
 
-## 🎯 Objectives
+## 🧾 Dataset
 
-- Predict next-day weather variables using a hybrid QML model
-- Compare QML performance against classical ML baselines
-- Demonstrate real-world applicability via Telegram Bot integration
+| Property | Details |
+|---|---|
+| Source | NASA POWER Daily Weather Data |
+| Location | Dhaka, Bangladesh |
+| Date Range | 1981-2026 |
+| Coverage | 45 years of daily observations |
+| Input Features | T2M, T2M_MAX, T2M_MIN, RH2M, PRECTOTCORR, WS2M |
+| Prediction Targets | All 6 features shifted by 1 day |
+
+### Feature Set
+
+| Feature | Description |
+|---|---|
+| T2M | Average temperature at 2 meters |
+| T2M_MAX | Maximum temperature at 2 meters |
+| T2M_MIN | Minimum temperature at 2 meters |
+| RH2M | Relative humidity at 2 meters |
+| PRECTOTCORR | Corrected precipitation |
+| WS2M | Wind speed at 2 meters |
 
 ---
 
-## 📂 Project Structure
+## 🧠 Model Architecture
 
+### Hybrid QML Model
+
+`HybridQMLModel` predicts six next-day weather variables from six scaled input features.
+
+| Component | Configuration |
+|---|---|
+| Input | 6 MinMax-scaled weather features |
+| Quantum Encoding | `AngleEmbedding` |
+| Quantum Layer | `StronglyEntanglingLayers` |
+| Qubits | 6 |
+| Quantum Depth | 3 layers |
+| Measurement | PauliZ expectation values |
+| Classical Head | `Linear(6 -> 16)` + ReLU + `Linear(16 -> 6)` |
+| Frameworks | PennyLane + PyTorch |
+| Output | 6 next-day weather variables |
+
+### Rain Classifier
+
+| Component | Details |
+|---|---|
+| Model | Random Forest |
+| Class Balancing | SMOTE oversampling |
+| Classes | No Rain, Light, Moderate, Heavy |
+| Output | Rain category and confidence percentage |
+
+### SHAP Explainability
+
+| Model | Explainer |
+|---|---|
+| Hybrid QML Model | `KernelExplainer` |
+| Random Forest | `TreeExplainer` |
+| Rain Classifier | SHAP feature importance |
+
+SHAP is used to identify the top three features influencing each prediction and to translate model behavior into plain-language explanations for chatbot users.
+
+### Baseline Models
+
+QuantWeather-BD compares the QML model against:
+
+- Linear Regression
+- Random Forest Regressor
+- MLP classical neural network
+- LSTM neural network
+
+---
+
+## ⚛️ Quantum Circuit
+
+The quantum forecasting layer uses a 6-qubit variational circuit. Each weather feature is encoded into the circuit through `AngleEmbedding`, followed by 3 layers of `StronglyEntanglingLayers` to learn nonlinear and entangled feature interactions. The circuit returns PauliZ expectation values, which are passed into the classical neural head for final next-day weather prediction.
+
+Circuit visualizations are saved as:
+
+- `circuit_clean.png`
+- `circuit_decomposed.png`
+- `quantum_circuit_diagram.png`
+
+---
+
+## 🔄 How It Works
+
+1. Load NASA POWER daily weather data for Dhaka.
+2. Scale the six weather features using MinMax normalization.
+3. Shift all target variables by one day for next-day forecasting.
+4. Train baseline models and the hybrid QML model.
+5. Train the SMOTE-enhanced rain classifier.
+6. Generate SHAP explanations for regression and rain classification.
+7. Serve predictions through a FastAPI webhook connected to Facebook Messenger.
+8. Use Groq LLM to convert model outputs into bilingual, user-friendly responses.
+
+---
+
+## 📊 Results
+
+Detailed per-variable results are stored in `full_evaluation_results.csv`. Average model-level summaries are stored in `model_comparison_summary.csv`.
+
+| Model | MAE (avg) | RMSE (avg) | R² (avg) | MAPE (avg %) |
+|---|---:|---:|---:|---:|
+| Linear Regression | See `full_evaluation_results.csv` | See `full_evaluation_results.csv` | See `full_evaluation_results.csv` | See `full_evaluation_results.csv` |
+| Random Forest | See `full_evaluation_results.csv` | See `full_evaluation_results.csv` | See `full_evaluation_results.csv` | See `full_evaluation_results.csv` |
+| MLP | See `full_evaluation_results.csv` | See `full_evaluation_results.csv` | See `full_evaluation_results.csv` | See `full_evaluation_results.csv` |
+| LSTM | See `full_evaluation_results.csv` | See `full_evaluation_results.csv` | See `full_evaluation_results.csv` | See `full_evaluation_results.csv` |
+| QML (Ours) | See `full_evaluation_results.csv` | See `full_evaluation_results.csv` | See `full_evaluation_results.csv` | See `full_evaluation_results.csv` |
+
+No metric values are hardcoded in this README. Use the generated CSV files for the authoritative numerical results.
+
+---
+
+## 💬 Facebook Messenger Chatbot
+
+QuantWeather-BD includes a chatbot deployment layer for making the forecasting system accessible through Facebook Messenger.
+
+| Component | Details |
+|---|---|
+| API Framework | FastAPI |
+| Messenger Integration | Facebook Messenger Platform webhook |
+| LLM | Groq API with LLaMA3-8b-8192 |
+| Development Tunnel | ngrok |
+| Languages | Bengali + English, auto-detected |
+| Current Weather | OpenWeatherMap API |
+| Tomorrow Forecast | Hybrid QML model + Rain Classifier |
+| Explanation | SHAP-based plain-language summary |
+| Historical Context | Past weather trend summary |
+
+### Chatbot Flow
+
+```text
+User message
+  -> Intent detection
+  -> OpenWeatherMap current weather lookup
+  -> QML next-day weather prediction
+  -> Rain Classifier category + confidence
+  -> SHAP explanation
+  -> Groq LLM response generation
+  -> Facebook Messenger reply
 ```
+
+---
+
+## 🗂️ Project Structure
+
+```text
 QuantWeather-BD/
+├── main.py
+├── .env.example
+├── requirements.txt
+├── QuantWeather-BD-Final-v2.ipynb
 ├── Dataset/
 │   └── bangladesh_weather_1981_2026.csv
-├── QuantWeather.ipynb               # Main notebook (Colab)
-├── qml_model_final.pth              # Trained QML model
-├── mlp_model_final.pth              # Trained MLP model
-├── lstm_model_final.pth             # Trained LSTM model
-├── lr_model.pkl                     # Trained Linear Regression
-├── rf_model.pkl                     # Trained Random Forest
-├── scaler_X.pkl                     # Feature scaler
-├── scaler_y.pkl                     # Target scaler
-├── full_evaluation_results.csv      # Per-variable results
-├── model_comparison_summary.csv     # Summary comparison
-├── statistical_tests.csv            # Wilcoxon test results
 ├── eda_timeseries.png
 ├── eda_correlation.png
 ├── convergence_plot.png
@@ -46,189 +181,144 @@ QuantWeather-BD/
 ├── confusion_matrix.png
 ├── roc_curves.png
 ├── model_comparison_chart.png
-└── training_time.png
+├── training_time.png
+├── hybrid_model_diagram.png
+├── circuit_clean.png
+├── circuit_decomposed.png
+├── shap_rf_summary.png
+├── shap_rf_bar.png
+├── shap_qml_summary.png
+├── shap_comparison.png
+├── shap_rain_importance.png
+├── seasonal_analysis.png
+├── residual_analysis.png
+├── boxplot.png
+├── learning_curves_classical.png
+├── rain_confusion_matrix.png
+├── rain_smote_confusion.png
+├── data_distribution.png
+├── quantum_circuit_diagram.png
+├── full_evaluation_results.csv
+├── model_comparison_summary.csv
+└── statistical_tests.csv
 ```
 
+> Note: `.env` files and trained model binaries (`*.pth`, `*.pkl`) are intentionally excluded from GitHub. Train or download them locally before running inference.
+
 ---
 
-## 📊 Dataset
+## 📁 Saved Outputs
 
-| Property | Details |
+### Graphs
+
+| File | Description |
 |---|---|
-| **Source** | NASA POWER (MERRA-2) |
-| **Location** | Dhaka, Bangladesh (23.8103°N, 90.4125°E) |
-| **Date Range** | January 1, 1981 → May 14, 2026 |
-| **Total Records** | 16,570 daily observations |
-| **Features** | T2M, T2M_MAX, T2M_MIN, RH2M, PRECTOTCORR, WS2M |
+| `eda_timeseries.png` | Weather variables over 45 years |
+| `eda_correlation.png` | Feature correlation heatmap + monthly temperature |
+| `convergence_plot.png` | Training loss for MLP, LSTM, QML |
+| `actual_vs_predicted.png` | Predicted vs actual values |
+| `confusion_matrix.png` | Rain classifier confusion matrix |
+| `roc_curves.png` | ROC curves for rain classifier |
+| `model_comparison_chart.png` | Visual comparison of all models |
+| `training_time.png` | Training time comparison |
+| `hybrid_model_diagram.png` | Full hybrid QML architecture diagram |
+| `circuit_clean.png` | Variational quantum circuit diagram |
+| `circuit_decomposed.png` | Decomposed quantum circuit using RZ, RY, and CNOT gates |
+| `shap_rf_summary.png` | SHAP summary plot for Random Forest |
+| `shap_rf_bar.png` | SHAP feature importance bar plot for Random Forest |
+| `shap_qml_summary.png` | SHAP summary plot for QML |
+| `shap_comparison.png` | SHAP comparison between RF and QML |
+| `shap_rain_importance.png` | SHAP importance for Rain Classifier |
+| `seasonal_analysis.png` | Seasonal weather patterns |
+| `residual_analysis.png` | Residual analysis plot |
+| `boxplot.png` | Feature distribution boxplots |
+| `learning_curves_classical.png` | Learning curves |
+| `rain_confusion_matrix.png` | Rain confusion matrix |
+| `rain_smote_confusion.png` | SMOTE rain confusion matrix |
+| `data_distribution.png` | Data distribution |
+| `quantum_circuit_diagram.png` | Quantum circuit visualization |
 
-### Feature Description
+### CSV Files
 
-| Feature | Description | Unit |
-|---|---|---|
-| T2M | Average temperature at 2m | °C |
-| T2M_MAX | Maximum temperature at 2m | °C |
-| T2M_MIN | Minimum temperature at 2m | °C |
-| RH2M | Relative humidity at 2m | % |
-| PRECTOTCORR | Corrected precipitation | mm/day |
-| WS2M | Wind speed at 2m | m/s |
-
----
-
-## ⚛️ Model Architecture
-
-### Hybrid QML Model
-
-```
-Input (6 features)
-       ↓
-Quantum Circuit (6 qubits, 3 StronglyEntanglingLayers)
-  - AngleEmbedding
-  - StronglyEntanglingLayers
-  - PauliZ measurements
-       ↓
-Classical Layers
-  - Linear(6 → 16) + ReLU
-  - Linear(16 → 6)
-       ↓
-Output (6 weather variables)
-```
-
-| Config | Value |
+| File | Description |
 |---|---|
-| Qubits | 6 |
-| VQC Layers | 3 |
-| Total Parameters | 268 |
-| Framework | PennyLane + PyTorch |
+| `full_evaluation_results.csv` | Complete per-variable evaluation |
+| `model_comparison_summary.csv` | Average metrics across all models |
+| `statistical_tests.csv` | Statistical significance tests |
 
----
+### Local Model Artifacts
 
-## 🏋️ Training Configuration
-
-| Parameter | Value |
+| File | Description |
 |---|---|
-| Optimizer | Adam (lr=0.005) |
-| Loss Function | MSELoss |
-| Epochs | 100 |
-| Batch Size | 64 |
-| LR Scheduler | StepLR (step=30, γ=0.5) |
-| Train/Test Split | 80% / 20% |
+| `qml_model_final.pth` | Trained QML model weights |
+| `mlp_model_final.pth` | Trained MLP model weights |
+| `lstm_model_final.pth` | Trained LSTM model weights |
+| `lr_model.pkl` | Linear Regression model |
+| `rf_model.pkl` | Random Forest model |
+| `rain_classifier_smote.pkl` | Rain classifier |
+| `scaler_X.pkl` | Input feature scaler |
+| `scaler_y.pkl` | Output target scaler |
+
+These files are generated or loaded locally and are ignored by Git because they can be large and may vary between runs.
 
 ---
 
-## 📈 Results
+## 🛠️ Tech Stack
 
-### Model Comparison (Average across 6 variables)
-
-| Model | MAE | RMSE | R² | MAPE (%) |
-|---|---|---|---|---|
-| Linear Regression | 1.7904 | 3.1333 | 0.7878 | 110.78 |
-| Random Forest | 1.8317 | 3.1599 | 0.7839 | 105.19 |
-| MLP | 1.8191 | 3.0333 | 0.8001 | 156.22 |
-| LSTM | 1.7915 | 3.0196 | 0.8016 | 157.66 |
-| **QML (Ours)** | **1.8589** | **3.0628** | **0.7970** | **190.90** |
-
-### Temperature Classification Results (QML)
-
-| Category | Precision | Recall | F1-Score |
-|---|---|---|---|
-| Cold (<20°C) | 0.90 | 0.94 | 0.92 |
-| Mild (20-27°C) | 0.89 | 0.85 | 0.87 |
-| Hot (27-32°C) | 0.95 | 0.96 | 0.96 |
-| Extreme (>32°C) | 0.76 | 0.37 | 0.50 |
-| **Overall Accuracy** | | | **92%** |
-
-### Statistical Significance (Wilcoxon Signed-Rank Test)
-
-| Comparison | p-value | Result |
-|---|---|---|
-| QML vs Linear Regression | 0.004393 | ✅ Significant |
-| QML vs Random Forest | 0.029319 | ✅ Significant |
-| QML vs MLP | 0.696380 | ➖ Comparable |
-| QML vs LSTM | 0.000000 | ✅ Significant |
-
-### Training Time Comparison
-
-| Model | Training Time |
-|---|---|
-| Linear Regression | 0.1s |
-| Random Forest | 10.8s |
-| MLP | 41.5s |
-| LSTM | 116.3s |
-| QML (Ours) | 18,030.7s (~5 hrs) |
+![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
+![PyTorch](https://img.shields.io/badge/PyTorch-2.x-ee4c2c.svg)
+![PennyLane](https://img.shields.io/badge/PennyLane-QML-674ea7.svg)
+![FastAPI](https://img.shields.io/badge/FastAPI-API-009688.svg)
+![Groq](https://img.shields.io/badge/Groq-LLaMA3-f55036.svg)
+![scikit-learn](https://img.shields.io/badge/scikit--learn-ML-f7931e.svg)
+![SHAP](https://img.shields.io/badge/SHAP-Explainability-1f77b4.svg)
+![OpenWeatherMap](https://img.shields.io/badge/OpenWeatherMap-Weather-eb6e4b.svg)
+![Facebook Messenger](https://img.shields.io/badge/Facebook%20Messenger-Webhook-0866ff.svg)
+![ngrok](https://img.shields.io/badge/ngrok-Tunnel-1f1e37.svg)
 
 ---
 
-## ⚙️ Installation
+## 🚀 Setup Instructions
+
+### 1. Install dependencies
 
 ```bash
-# Create conda environment
-conda create -n quantum python=3.10
-conda activate quantum
-
-# Install dependencies
-pip install pennylane pennylane-lightning
-pip install torch scikit-learn pandas numpy
-pip install matplotlib seaborn joblib tqdm scipy
+pip install -r requirements.txt
 ```
 
----
+### 2. Create environment variables
 
-## 🚀 Usage
+Copy `.env.example` to `.env`, then add your private credentials:
 
-### Google Colab (Recommended)
-1. Upload `QuantWeather.ipynb` to Google Colab
-2. Set Runtime → T4 GPU
-3. Upload dataset to Google Drive at:
-   `My Drive/QuantWeather-BD/Dataset/bangladesh_weather_1981_2026.csv`
-4. Run all cells
-
----
-
-## 📦 Dependencies
-
-| Package | Version |
-|---|---|
-| Python | 3.10+ |
-| PennyLane | 0.29.1 |
-| PyTorch | 2.x |
-| scikit-learn | latest |
-| pandas | latest |
-| numpy | latest |
-| matplotlib | latest |
-| seaborn | latest |
-| scipy | latest |
-
----
-
-## 🔮 Future Work
-
-- Telegram Bot integration for real-time forecasting
-- Precipitation classification (No Rain / Light / Moderate / Heavy)
-- Multi-city expansion (Chittagong, Sylhet, Rajshahi)
-- Pressure (PS) feature integration
-- Ablation study (4 vs 6 qubits)
-- Real quantum hardware deployment (IBM Quantum)
-
----
-
-## 📄 Citation
-
-```bibtex
-@article{quantweather_bd_2026,
-  title   = {QuantWeather-BD: Quantum Machine Learning-Based 
-             Weather Forecasting for Bangladesh},
-  author  = {},
-  journal = {},
-  year    = {2026}
-}
+```env
+VERIFY_TOKEN=your_facebook_verify_token
+PAGE_ACCESS_TOKEN=your_facebook_page_access_token
+GROQ_API_KEY=your_groq_api_key
+OpenWeatherMapAPI=your_openweathermap_api_key
 ```
 
+### 3. Run the FastAPI server
+
+```bash
+uvicorn main:app --port 8000 --reload
+```
+
+### 4. Start ngrok
+
+```bash
+ngrok http 8000
+```
+
+### 5. Configure Facebook webhook
+
+Use the generated ngrok HTTPS URL as the webhook callback URL in the Facebook Developer Console, then set the verify token to match `VERIFY_TOKEN`.
+
 ---
 
-## 📜 License
+## 🔬 Research Notes
 
-This project is licensed under the MIT License.
+QuantWeather-BD is designed as a reproducible research prototype for exploring whether hybrid quantum-classical architectures can provide useful weather forecasting behavior on real-world meteorological data. The project keeps model comparison, statistical testing, explainability, and deployment artifacts together so the full forecasting pipeline can be inspected end to end.
 
 ---
 
-*Dataset source: NASA Prediction Of Worldwide Energy Resources (POWER) — https://power.larc.nasa.gov*
+Built with ❤️ using Quantum Machine Learning for Bangladesh 🇧🇩
