@@ -1,0 +1,5 @@
+Comparison,p-value,Significant (p<0.05)
+QML vs Linear Regression,0.004394,True
+QML vs Random Forest,0.029316,True
+QML vs MLP,0.0,True
+QML vs LSTM,4.4e-05,True

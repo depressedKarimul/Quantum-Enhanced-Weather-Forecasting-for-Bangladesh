@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+python-dotenv
+httpx
+joblib
+numpy
+torch
+scikit-learn==1.6.1
+pennylane
+shap
